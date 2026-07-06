@@ -6,6 +6,11 @@ namespace LoginToDashboard.Controllers
     public class DashboardController : Controller
     {
 
+        public DashboardController(IConfiguration configuration)
+        {
+            _connString = configuration.GetConnectionString("DefaultConnection");
+        }
+
         [Authorize]
         public IActionResult Index()
         {
