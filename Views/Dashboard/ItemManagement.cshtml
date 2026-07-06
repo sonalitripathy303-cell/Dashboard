@@ -1,0 +1,85 @@
+﻿@model IEnumerable<LoginToDashboard.Models.InventoryItem>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Control Center</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark px-4 mb-4">
+        <a class="navbar-brand fw-bold" asp-action="Index">📊 Core Operations Engine</a>
+        <a class="btn btn-outline-info btn-sm" asp-action="Report">Go to Report Engine</a>
+    </nav>
+
+    <div class="container-fluid px-4">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-primary text-white font-weight-bold">📌 Register New Inventory Asset</div>
+                    <div class="card-body">
+                        <form asp-action="AddItem" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Item Identifier Name</label>
+                                <input type="text" name="ItemName" class="form-control" placeholder="e.g. Logic Pro Hub" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Inbound Asset Volume (Initial Qty)</label>
+                                <input type="number" name="InitialQuantity" class="form-control" min="1" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Base Valuation Cost (Unit Price)</label>
+                                <input type="number" step="0.01" name="PricePerItem" class="form-control" required />
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Commit Record Entry</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-secondary text-white fw-bold">📋 Real-Time Stock Status Engine (Item List)</div>
+                    <div class="card-body table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Item Details</th>
+                                    <th>Pricing Valuation</th>
+                                    <th>Volumes Tracker</th>
+                                    <th>Liquidations Pipeline (Sell Item)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td><strong>@item.ItemName</strong></td>
+                                        <td>₹@item.PricePerItem</td>
+                                        <td>
+                                            <span class="badge bg-secondary">Total: @item.InitialQuantity</span><br />
+                                            <span class="badge bg-danger">Sold: @item.SoldQuantity</span><br />
+                                            <span class="badge bg-success">Remaining: @item.RemainingQuantity</span>
+                                        </td>
+                                        <td>
+                                            <form asp-action="SellItem" method="post" class="d-flex gap-2">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="itemId" value="@item.ItemId" />
+                                                <input type="number" name="quantityToSell" class="form-control form-control-sm" style="width:75px;" min="1" max="@item.RemainingQuantity" required placeholder="Qty" />
+                                                <button type="submit" class="btn btn-danger btn-sm" @(item.RemainingQuantity == 0 ? "disabled" : "")>Process Sale</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,97 @@
+﻿@model IEnumerable<LoginToDashboard.Models.ReportRowModel>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Performance Metrics Audit Log</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        /* CSS Print Directive Rules to automate structural transformation for neat tracking prints */
+        @@media print {
+            .no-print, .btn, form, nav
+
+        {
+            display: none !important;
+        }
+
+        body {
+            background-color: #fff !important;
+            padding: 0 !important;
+        }
+
+        .card {
+            border: none !important;
+            shadow: none !important;
+        }
+
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark px-4 mb-4 no-print">
+        <a class="navbar-brand" asp-action="ItemManagement">⬅ Return to Operations Center</a>
+        <button onclick="window.print()" class="btn btn-success btn-sm">🖨 Execute System Printout</button>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="card shadow-sm mb-4 no-print border-0">
+            <div class="card-header bg-dark text-white fw-bold">🔍 Query Target Filters</div>
+            <div class="card-body">
+                <form asp-action="Report" method="get" class="row g-3 align-items-center">
+                    <div class="col-md-9">
+                        <input type="text" name="searchItemName" value="@ViewBag.SearchTerm" class="form-control" placeholder="Enter ITEM NAME exactly or partially..." />
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">Fetch System Records</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white text-center border-0 py-3">
+                <h2 class="fw-bold text-dark m-0">INVENTORY STATEMENT REPORT</h2>
+                <small class="text-muted text-uppercase tracking-wider">System Generation Timestamp: @DateTime.Now.ToString("g")</small>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered table-striped align-middle text-center">
+                    <thead class="table-secondary text-uppercase font-monospace small">
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Last Sold Date</th>
+                            <th>Sold Qty</th>
+                            <th>Sold Value</th>
+                            <th>Remaining Qty</th>
+                            <th>Remaining Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-muted py-4">No matching assets found in local data storage buffers.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var dataRow in Model)
+                            {
+                                <tr>
+                                    <td class="text-start fw-bold">@dataRow.ItemName</td>
+                                    <td>@(dataRow.SoldDate.HasValue? dataRow.SoldDate.Value.ToString("yyyy-MM-dd HH:mm") : "-")</td>
+                                    <td>@dataRow.SoldQuantity</td>
+                                    <td class="text-danger fw-bold">₹@dataRow.SoldPrice.ToString("N2")</td>
+                                    <td>@dataRow.RemainingQuantity</td>
+                                    <td class="text-success fw-bold">₹@dataRow.RemainingPrice.ToString("N2")</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
