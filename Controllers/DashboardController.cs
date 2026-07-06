@@ -9,7 +9,7 @@ namespace LoginToDashboard.Controllers
 
         public DashboardController(IConfiguration configuration)
         {
-            _connString = configuration.GetConnectionString("DefaultConnection");
+            _connString = configuration.GetConnectionString("DefaultConnection");//f4
         }
 
         [Authorize]
