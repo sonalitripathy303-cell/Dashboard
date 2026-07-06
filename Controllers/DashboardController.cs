@@ -5,6 +5,7 @@ namespace LoginToDashboard.Controllers
 {
     public class DashboardController : Controller
     {
+        private readonly string _connString;
 
         public DashboardController(IConfiguration configuration)
         {
