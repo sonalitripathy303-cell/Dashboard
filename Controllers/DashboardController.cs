@@ -17,7 +17,7 @@ namespace LoginToDashboard.Controllers
         {
             // 2. Since the JWT is valid, the framework automatically extracts the Username 
             // from the token payload and puts it here!
-            ViewBag.Username = User.Identity?.Name ?? "Authenticated User";
+            ViewBag.Username = User.Identity?.Name ?? "Authenticated User";//user
 
             return View();
         }
